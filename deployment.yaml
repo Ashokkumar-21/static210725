@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: static-nginx
+  labels:
+    app: static-nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: static-nginx
+  template:
+    metadata:
+      labels:
+        app: static-nginx
+    spec:
+      containers:
+        - name: static-nginx
+          image: 098588167308.dkr.ecr.ap-south-1.amazonaws.com/static-nginx:latest
+          ports:
+            - containerPort: 80
