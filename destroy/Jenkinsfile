@@ -1,0 +1,35 @@
+pipeline {
+  agent any
+
+  environment {
+    AWS_REGION = 'ap-south-1'
+    AWS_ACCOUNT_ID = '098588167308'
+    CLUSTER = 'devops-eks-cluster'
+  }
+
+  stages {
+    stage('Terraform Destroy') {
+      steps {
+        withCredentials([[
+          $class: 'AmazonWebServicesCredentialsBinding',
+          credentialsId: 'aws_credentials1'
+        ]]) {
+          // 👇 Dynamically go to the root of the Git repo
+          dir("${env.WORKSPACE}") {
+            sh '''
+              echo ">> Destroying Terraform-managed resources"
+              terraform init -reconfigure
+              terraform destroy -auto-approve
+            '''
+          }
+        }
+      }
+    }
+  }
+
+  post {
+    always {
+      echo 'Terraform Destroy Job completed!'
+    }
+  }
+}
